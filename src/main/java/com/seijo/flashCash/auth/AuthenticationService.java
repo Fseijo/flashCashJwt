@@ -3,6 +3,7 @@ package com.seijo.flashCash.auth;
 
 import com.seijo.flashCash.model.Role;
 import com.seijo.flashCash.model.User;
+import com.seijo.flashCash.model.UserAccount;
 import com.seijo.flashCash.repositories.UserRepository;
 import com.seijo.flashCash.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -16,21 +17,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
 
     public AuthenticationResponse register(RegisterRequest request) {
+        UserAccount account = new UserAccount();
+        account.setAmount(0.0);
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
+                .account(account)
                 .password(encoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .build();
-        repository.save(user);
+        userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
@@ -44,7 +48,7 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
