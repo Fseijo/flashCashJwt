@@ -29,20 +29,19 @@ public class SecurityConfig {
                         (csrf)-> csrf.disable()
                 )
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/bootstrap.min.css", "/bootstrap.bundle.min.js", "/index.css","/images/**", "/", "/index", "/signing", "/signup", "/flashcash/auth/**")
+                        .requestMatchers("/api/v1/auth/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
                 )
-                .formLogin(
-                        (form)-> form
-                                .loginPage("/signing")
-                                .permitAll()
-                )
-                .logout(
-                        (logout)-> logout
-                                .permitAll()
-                )
+//                .formLogin(
+//                        (form)-> form
+//                                .permitAll()
+//                )
+//                .logout(
+//                        (logout)-> logout
+//                                .permitAll()
+//                )
                 .sessionManagement(
                         (session)-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
