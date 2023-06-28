@@ -29,19 +29,22 @@ public class SecurityConfig {
                         (csrf)-> csrf.disable()
                 )
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/v1/auth/**")
+                        .requestMatchers("/api/v1/auth/**", "/", "/static/bootstrap.min.css", "/static/index.css", "/images/**", "/signin", "signup")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
                 )
-//                .formLogin(
-//                        (form)-> form
-//                                .permitAll()
-//                )
-//                .logout(
-//                        (logout)-> logout
-//                                .permitAll()
-//                )
+                .formLogin(
+                        (form)-> form
+                                .loginPage("/")
+                                .permitAll()
+                                .usernameParameter("email")
+                                .defaultSuccessUrl("/")
+                )
+                .logout(
+                        (logout)-> logout
+                                .permitAll()
+                )
                 .sessionManagement(
                         (session)-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
